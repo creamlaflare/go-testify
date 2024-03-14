@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -15,7 +16,7 @@ func TestMainHandlerWhenOk(t *testing.T) {
 	handler := http.HandlerFunc(mainHandle)
 	handler.ServeHTTP(responseRecorder, req)
 
-	assert.Equal(t, http.StatusOK, responseRecorder.Code, "Wrong status code")
+	require.Equal(t, http.StatusOK, responseRecorder.Code, "Wrong status code")
 }
 
 func TestMainHandlerWhenUnsupportedCity(t *testing.T) {
@@ -27,11 +28,13 @@ func TestMainHandlerWhenUnsupportedCity(t *testing.T) {
 
 	assert.Equal(t, http.StatusBadRequest, responseRecorder.Code, "Wrong status code")
 
+	assert.NotEmptyf(t, responseRecorder.Body, "Response must not be empty")
+
 	assert.Equal(t, "wrong city value", responseRecorder.Body.String(), "wrong response")
 }
 
 func TestMainHandlerWhenLargeCount(t *testing.T) {
-	totalCount := 4
+	totalCount := len(cafeList["moscow"])
 	req := httptest.NewRequest("GET", "/cafe?count=10&city=moscow", nil)
 
 	responseRecorder := httptest.NewRecorder()
@@ -41,7 +44,6 @@ func TestMainHandlerWhenLargeCount(t *testing.T) {
 	assert.Equal(t, http.StatusOK, responseRecorder.Code, "wrong status code")
 
 	body := responseRecorder.Body.String()
-	list := strings.Split(body, ",")
 
-	assert.Equal(t, totalCount, len(list), "wrong expected cafe count")
+	assert.Equal(t, totalCount, len(strings.Split(body, ",")), "wrong expected cafe count")
 }
