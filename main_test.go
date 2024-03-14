@@ -16,6 +16,8 @@ func TestMainHandlerWhenOk(t *testing.T) {
 	handler := http.HandlerFunc(mainHandle)
 	handler.ServeHTTP(responseRecorder, req)
 
+	require.NotEmptyf(t, responseRecorder.Body, "Response must not be empty")
+
 	require.Equal(t, http.StatusOK, responseRecorder.Code, "Wrong status code")
 }
 
@@ -28,7 +30,7 @@ func TestMainHandlerWhenUnsupportedCity(t *testing.T) {
 
 	assert.Equal(t, http.StatusBadRequest, responseRecorder.Code, "Wrong status code")
 
-	assert.NotEmptyf(t, responseRecorder.Body, "Response must not be empty")
+	require.NotEmptyf(t, responseRecorder.Body, "Response must not be empty")
 
 	assert.Equal(t, "wrong city value", responseRecorder.Body.String(), "wrong response")
 }
@@ -42,6 +44,8 @@ func TestMainHandlerWhenLargeCount(t *testing.T) {
 	handler.ServeHTTP(responseRecorder, req)
 
 	assert.Equal(t, http.StatusOK, responseRecorder.Code, "wrong status code")
+
+	require.NotEmptyf(t, responseRecorder.Body, "Response must not be empty")
 
 	body := responseRecorder.Body.String()
 
