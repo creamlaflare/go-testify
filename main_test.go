@@ -16,9 +16,8 @@ func TestMainHandlerWhenOk(t *testing.T) {
 	handler := http.HandlerFunc(mainHandle)
 	handler.ServeHTTP(responseRecorder, req)
 
-	require.NotEmptyf(t, responseRecorder.Body, "Response must not be empty")
-
 	require.Equal(t, http.StatusOK, responseRecorder.Code, "Wrong status code")
+	assert.NotEmptyf(t, responseRecorder.Body, "Response must not be empty")
 }
 
 func TestMainHandlerWhenUnsupportedCity(t *testing.T) {
